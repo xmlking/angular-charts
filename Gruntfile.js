@@ -12,17 +12,24 @@ module.exports = function(grunt) {
       dist: {
         src: ['build/*.js'],
         dest: 'dist/angular-charts.js'
+      },
+      amd:{
+        src:['src/angular-charts.prefix','build/*.js','src/angular-charts.suffix'],
+        dest:'dist/amd/angular-charts.js'
       }
     },
     uglify : {
       dist: {
         src: 'dist/angular-charts.js',
         dest: 'dist/angular-charts.min.js'
+      },amd:{
+        src:'dist/amd/angular-charts.js',
+        dest:'dist/amd/angular-charts.min.js'
       }
     },
     clean : ["build"],
     watch: {
-        scripts: {
+      scripts: {
         files: ['src/**/*.js', 'src/**/*.html', 'src/**/*.css'],
         tasks: ['ngmin', 'htmlmin', 'html2js', 'csso', 'css2js', 'concat', 'uglify', 'clean'],
         options: {
@@ -95,7 +102,9 @@ module.exports = function(grunt) {
       bowerPreRelease: {
         files: [
           { src: 'dist/angular-charts.js', dest: 'dist/angular-charts.tmp.js' },
-          { src: 'dist/angular-charts.min.js', dest: 'dist/angular-charts.min.tmp.js' }
+          { src: 'dist/angular-charts.min.js', dest: 'dist/angular-charts.min.tmp.js' },
+          { src: 'dist/amd/angular-charts.js', dest: 'dist/amd/angular-charts.tmp.js' },
+          { src: 'dist/amd/angular-charts.min.js', dest: 'dist/amd/angular-charts.min.tmp.js' }
         ]
       }
     },
@@ -106,6 +115,8 @@ module.exports = function(grunt) {
           'git checkout master -- bower.json',
           'mv -f dist/angular-charts.tmp.js dist/angular-charts.js',
           'mv -f dist/angular-charts.min.tmp.js dist/angular-charts.min.js',
+          'mv -f dist/amd/angular-charts.tmp.js dist/amd/angular-charts.js',
+          'mv -f dist/amd/angular-charts.min.tmp.js dist/amd/angular-charts.min.js',
           "git commit -am 'release <%= pkg.version %>'",
           'git tag <%= pkg.version %>'
         ].join('&&')
@@ -117,6 +128,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['ngmin', 'htmlmin', 'html2js', 'csso', 'css2js', 'concat', 'uglify', 'clean', 'karma']);
   grunt.registerTask('release', ['karma', 'prompt', 'bowerValidateRelease']);
+  grunt.registerTask('amd',['ngmin','html2js','concat:amd','uglify:amd','clean']);
 
   grunt.registerTask('bowerValidateRelease', 'Make sure that we really want to release!', function() {
     if(grunt.config('release') === true) {
