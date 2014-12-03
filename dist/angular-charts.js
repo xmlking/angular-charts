@@ -14,24 +14,41 @@ angular.module('angularCharts').directive('acChart', [
   '$sce',
   function ($templateCache, $compile, $rootElement, $window, $timeout, $sce) {
     var defaultColors = [
-        'steelBlue',
         'rgb(255,153,0)',
         'rgb(220,57,18)',
         'rgb(70,132,238)',
         'rgb(73,66,204)',
-        'rgb(0,128,0)'
+        'rgb(0,128,0)',
+        'rgb(0, 169, 221)',
+        'steelBlue',
+        'rgb(0, 169, 221)',
+        'rgb(50, 205, 252)',
+        'rgb(70,132,238)',
+        'rgb(0, 169, 221)',
+        'rgb(5, 150, 194)',
+        'rgb(50, 183, 224)',
+        'steelBlue',
+        'rgb(2, 185, 241)',
+        'rgb(0, 169, 221)',
+        'steelBlue',
+        'rgb(0, 169, 221)',
+        'rgb(50, 205, 252)',
+        'rgb(70,132,238)',
+        'rgb(0, 169, 221)',
+        'rgb(5, 150, 194)',
+        'rgb(50, 183, 224)',
+        'steelBlue',
+        'rgb(2, 185, 241)'
       ];
     /**
    * Utility function to call when we run out of colors!
    * @return {String} Hexadecimal color
    */
     function getRandomColor() {
-      var letters = '0123456789ABCDEF'.split('');
-      var color = '#';
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.round(Math.random() * 15)];
-      }
-      return color;
+      var r = (Math.round(Math.random() * 127) + 127).toString(16);
+      var g = (Math.round(Math.random() * 127) + 127).toString(16);
+      var b = (Math.round(Math.random() * 127) + 127).toString(16);
+      return '#' + r + g + b;
     }
     /**
    * Utility function that gets the child that matches the classname
@@ -75,11 +92,12 @@ angular.module('angularCharts').directive('acChart', [
             position: 'left',
             htmlEnabled: false
           },
-          colors: [],
+          colors: defaultColors,
           innerRadius: 0,
           lineLegend: 'lineEnd',
           lineCurveType: 'cardinal',
-          isAnimate: true
+          isAnimate: true,
+          yAxisTickFormat: 's'
         };
       var totalWidth = element[0].clientWidth;
       var totalHeight = element[0].clientHeight;
@@ -243,7 +261,7 @@ angular.module('angularCharts').directive('acChart', [
        */
         var xAxis = d3.svg.axis().scale(x).orient('bottom');
         filterXAxis(xAxis, x);
-        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(10).tickFormat(d3.format('s'));
+        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(10).tickFormat(d3.format(config.yAxisTickFormat));
         /**
        * Start drawing the chart!
        * @type {[type]}
@@ -338,7 +356,7 @@ angular.module('angularCharts').directive('acChart', [
           ]);
         var xAxis = d3.svg.axis().scale(x).orient('bottom');
         filterXAxis(xAxis, x);
-        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(5).tickFormat(d3.format('s'));
+        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(5).tickFormat(d3.format(config.yAxisTickFormat));
         var line = d3.svg.line().interpolate(config.lineCurveType).x(function (d) {
             return getX(d.x);
           }).y(function (d) {
@@ -491,7 +509,7 @@ angular.module('angularCharts').directive('acChart', [
           ]);
         var xAxis = d3.svg.axis().scale(x).orient('bottom');
         filterXAxis(xAxis, x);
-        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(5).tickFormat(d3.format('s'));
+        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(5).tickFormat(d3.format(config.yAxisTickFormat));
         d3.svg.line().interpolate(config.lineCurveType).x(function (d) {
           return getX(d.x);
         }).y(function (d) {
@@ -644,7 +662,7 @@ angular.module('angularCharts').directive('acChart', [
           ]);
         var xAxis = d3.svg.axis().scale(x).orient('bottom');
         filterXAxis(xAxis, x);
-        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(5).tickFormat(d3.format('s'));
+        var yAxis = d3.svg.axis().scale(y).orient('left').ticks(5).tickFormat(d3.format(config.yAxisTickFormat));
         var yData = [0];
         var linedata = [];
         points.forEach(function (d) {
@@ -762,7 +780,7 @@ angular.module('angularCharts').directive('acChart', [
           scope.$tooltip.remove();
         }
       }
-      function updateToolTip(event) {
+      function updateToolTip(d, event) {
         if (scope.$tooltip) {
           scope.$tooltip.css({
             left: event.pageX + 20 + 'px',
